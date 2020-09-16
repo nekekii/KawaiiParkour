@@ -1,0 +1,13 @@
+name: KawaiiParkour
+version: 1.0
+author: nekeki
+main: com.nekeki.kawaiiparkour.KawaiiParkour
+api-version: 1.16
+website: nekeki.com/kawaiiparkour
+commands:
+  parkour:
+    description: Use kawaii parkour commands. Find subcommands with /parkour help.
+    usage: /parkour <subcommand>
+  kawaiiparkour:
+    description: Provides info about KawaiiParkour.
+    usage: /kawaiiparkour
