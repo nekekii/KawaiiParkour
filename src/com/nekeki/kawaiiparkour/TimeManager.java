@@ -3,6 +3,7 @@ package com.nekeki.kawaiiparkour;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -39,29 +40,34 @@ public class TimeManager {
         String playerID = "player." + player.getUniqueId().toString();
         String[] point = getPoint(location, true);
         if(point[0].equals("true")) {
-            Date t = new Date();
-
-            if(kawaiiFile.getBoolean(playerID + ".hasStarted") && kawaiiFile.getString(playerID + ".runCourse").equals(point[1])) {
-                player.sendMessage(ChatColor.DARK_PURPLE + "Restarted parkour " + ChatColor.LIGHT_PURPLE + point[1] + ChatColor.DARK_PURPLE + "!");
+            if(player.getAllowFlight()) {
+                player.sendMessage(ChatColor.RED + "You can't start the parkour with flight mode enabled!");
             } else {
-                player.sendMessage(ChatColor.DARK_PURPLE + "Started parkour " + ChatColor.LIGHT_PURPLE + point[1] + ChatColor.DARK_PURPLE + "!");
+                Date t = new Date();
+
+                if(kawaiiFile.getBoolean(playerID + ".hasStarted") && kawaiiFile.getString(playerID + ".runCourse").equals(point[1])) {
+                    player.sendMessage(ChatColor.DARK_PURPLE + "Restarted parkour " + ChatColor.LIGHT_PURPLE + point[1] + ChatColor.DARK_PURPLE + "!");
+                } else {
+                    player.sendMessage(ChatColor.DARK_PURPLE + "Started parkour " + ChatColor.LIGHT_PURPLE + point[1] + ChatColor.DARK_PURPLE + "!");
+                }
+
+                ConfigurablesExecutor configurablesExecutor = new ConfigurablesExecutor();
+                configurablesExecutor.sound(player);
+
+                kawaiiFile.set(playerID + ".startYaw", (double) player.getLocation().getYaw());
+                kawaiiFile.set(playerID + ".checkpointYaw", (double) player.getLocation().getYaw());
+                kawaiiFile.set(playerID + ".startTime", t.getTime());
+                kawaiiFile.set(playerID + ".hasStarted", true);
+                kawaiiFile.set(playerID + ".runCourse", point[1]);
+                kawaiiFile.set(playerID + ".checkpoint", 0);
+
+                try {
+                    kawaiiFile.save(file);
+                } catch (IOException e) {
+                    System.out.println("Error saving start run data for " + player.getName() + ".");
+                }
             }
 
-            ConfigurablesExecutor configurablesExecutor = new ConfigurablesExecutor();
-            configurablesExecutor.sound(player);
-
-            kawaiiFile.set(playerID + ".startYaw", (double) player.getLocation().getYaw());
-            kawaiiFile.set(playerID + ".checkpointYaw", (double) player.getLocation().getYaw());
-            kawaiiFile.set(playerID + ".startTime", t.getTime());
-            kawaiiFile.set(playerID + ".hasStarted", true);
-            kawaiiFile.set(playerID + ".runCourse", point[1]);
-            kawaiiFile.set(playerID + ".checkpoint", 0);
-
-            try {
-                kawaiiFile.save(file);
-            } catch (IOException e) {
-                System.out.println("Error saving start run data for " + player.getName() + ".");
-            }
         }
 
     }
@@ -201,15 +207,39 @@ public class TimeManager {
         //This places a player at a parkour start line
         String playerID = "player." + player.getUniqueId().toString();
         if(kawaiiFile.getBoolean(playerID + ".hasStarted")) {
+            cancelRun(player, false);
             Location location = kawaiiFile.getLocation("parkour." + kawaiiFile.getString(playerID + ".runCourse") + ".start");
             Location l = location.clone();
             l.add(0.5, 0, 0.5);
             l.setYaw((float) kawaiiFile.getDouble(playerID + ".startYaw"));
             player.teleport(l);
-            player.sendMessage(ChatColor.DARK_PURPLE + "Sent you to the start!");
         } else {
             player.sendMessage(ChatColor.RED + "You have not started a parkour yet!");
         }
+    }
+
+    public static void cancelRun (Player player, boolean isFlying) {
+        String playerID = "player." + player.getUniqueId().toString();
+        boolean save = false;
+        if(isFlying) {
+            if(kawaiiFile.getBoolean(playerID + ".hasStarted") && !kawaiiFile.getBoolean(playerID + ".creationIntercept")) {
+                player.sendMessage(ChatColor.RED + "You can't be in flight mode. Cancelled your parkour run.");
+                save = true;
+            }
+        } else {
+            player.sendMessage(ChatColor.DARK_PURPLE + "Cancelled your parkour run and sent you to the start!");
+            save = true;
+        }
+
+        if(save) {
+            kawaiiFile.set(playerID + ".hasStarted", false);
+            try {
+                kawaiiFile.save(file);
+            } catch (IOException e) {
+                System.out.println("Failed to save cancel run for " + player.getName() + ".");
+            }
+        }
+
     }
 
     public static void parkourSetup(Player player, String name) {
@@ -478,6 +508,39 @@ public class TimeManager {
         //this returns the checkpoint phase the player is in the process of creating
         String parkourName = kawaiiFile.getString("player." + player.getUniqueId().toString() + ".creationName");
         return kawaiiFile.getInt("parkour." + parkourName + ".nocheckpoints");
+    }
+
+    public static void sendParkourInfo(CommandSender sender, String parkourName) {
+        boolean sendMessage = false;
+        Set<String> parkourKeys = kawaiiFile.getConfigurationSection("parkour").getKeys(false);
+        for(String x : parkourKeys) {
+            if(x.equals(parkourName)){
+                sendMessage = true;
+            }
+        }
+
+        if(sendMessage) {
+            sender.sendMessage(ChatColor.DARK_PURPLE + "----- " + ChatColor.LIGHT_PURPLE + parkourName + ChatColor.DARK_PURPLE + " -----");
+            sender.sendMessage(ChatColor.DARK_PURPLE + "Number of checkpoints: " + ChatColor.LIGHT_PURPLE + kawaiiFile.getInt("parkour." + parkourName + ".nocheckpoints"));
+            if(kawaiiFile.isSet("parkour." + parkourName + ".recordName")) {
+                sender.sendMessage(ChatColor.DARK_PURPLE + "Record holder: " + ChatColor.LIGHT_PURPLE + kawaiiFile.getString("parkour." + parkourName + ".recordName"));
+                sender.sendMessage(ChatColor.DARK_PURPLE + "Record time: " + ChatColor.LIGHT_PURPLE + readableTime((long) kawaiiFile.getDouble("parkour." + parkourName + ".recordTime")));
+            } else {
+                sender.sendMessage(ChatColor.DARK_PURPLE + "Record holder: " + ChatColor.LIGHT_PURPLE + "None");
+                sender.sendMessage(ChatColor.DARK_PURPLE + "Record time: " + ChatColor.LIGHT_PURPLE + "None");
+            }
+
+        } else {
+            sender.sendMessage(ChatColor.RED + "That is not a valid parkour! This is case sensitive.");
+        }
+    }
+
+    public static void sendParkourList(CommandSender sender) {
+        Set<String> parkourKeys = kawaiiFile.getConfigurationSection("parkour").getKeys(false);
+        sender.sendMessage(ChatColor.DARK_PURPLE + "----- Parkour List -----");
+        for(String x : parkourKeys) {
+            sender.sendMessage(ChatColor.LIGHT_PURPLE + x);
+        }
     }
 
     static String readableTime(Long milliseconds) {

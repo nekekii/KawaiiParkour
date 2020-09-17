@@ -5,8 +5,10 @@ import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerToggleFlightEvent;
 
 public class EventsListener implements Listener {
 
@@ -57,6 +59,20 @@ public class EventsListener implements Listener {
         //This deletes a parkour creation if it is still in setup while the player leaves
         if(TimeManager.inSetup(event.getPlayer())) {
             TimeManager.deleteParkour(TimeManager.getSetupName(event.getPlayer()), false);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerFlightChange(PlayerToggleFlightEvent event) {
+        if(event.getPlayer().getAllowFlight()) {
+            TimeManager.cancelRun(event.getPlayer(), true);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerGamemodeChange(PlayerGameModeChangeEvent event) {
+        if(event.getPlayer().getAllowFlight()) {
+            TimeManager.cancelRun(event.getPlayer(), true);
         }
     }
 

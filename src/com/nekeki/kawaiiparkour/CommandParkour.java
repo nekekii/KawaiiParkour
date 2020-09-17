@@ -78,11 +78,34 @@ public class CommandParkour implements CommandExecutor {
                   sender.sendMessage("You need to be a player to use this command, silly!");
               }
             } else if(args[0].toLowerCase().equals("cleartimes")) {
-                TimeManager.deleteAllTimes(args[1]);
-                sender.sendMessage(ChatColor.DARK_PURPLE + "Deleted all personal bests and record time for " + ChatColor.LIGHT_PURPLE + args[1] + ChatColor.DARK_PURPLE + ".");
+                if(args.length > 1) {
+                    TimeManager.deleteAllTimes(args[1]);
+                    sender.sendMessage(ChatColor.DARK_PURPLE + "Deleted all personal bests and record time for " + ChatColor.LIGHT_PURPLE + args[1] + ChatColor.DARK_PURPLE + ".");
+                } else {
+                    sender.sendMessage(ChatColor.RED + "Please enter a course name to clear all times from!");
+                }
             } else if(args[0].toLowerCase().equals("cleartoptime")) {
-                TimeManager.deleteRecordTime(args[1]);
-                sender.sendMessage(ChatColor.DARK_PURPLE + "Deleted record time for " + ChatColor.LIGHT_PURPLE + args[1] + ChatColor.DARK_PURPLE + ".");
+                if(args.length > 1) {
+                    TimeManager.deleteRecordTime(args[1]);
+                    sender.sendMessage(ChatColor.DARK_PURPLE + "Deleted record time for " + ChatColor.LIGHT_PURPLE + args[1] + ChatColor.DARK_PURPLE + ".");
+                } else {
+                    sender.sendMessage(ChatColor.RED + "Please enter a course name to clear top time from!");
+                }
+            } else if(args[0].toLowerCase().equals("info")) {
+                if(args.length > 1) {
+                    TimeManager.sendParkourInfo(sender, args[1]);
+                } else {
+                    sender.sendMessage(ChatColor.RED + "Please enter a course name to show info about!");
+                }
+            } else if(args[0].toLowerCase().equals("option")) {
+                if(args.length > 1) {
+                    ConfigurablesExecutor configurablesExecutor = new ConfigurablesExecutor();
+                    configurablesExecutor.setOption(sender, args[1]);
+                } else {
+                    sender.sendMessage(ChatColor.RED + "Please include an option! Current options: firework, sound");
+                }
+            } else if(args[0].toLowerCase().equals("list")) {
+                TimeManager.sendParkourList(sender);
             } else if(args[0].toLowerCase().equals("help")) {
                 //TODO: Check perms and fix command order
                 sender.sendMessage(ChatColor.DARK_PURPLE + "KawaiiParkour help - v1.0");
@@ -94,6 +117,9 @@ public class CommandParkour implements CommandExecutor {
                 sender.sendMessage(ChatColor.LIGHT_PURPLE + "/parkour option <option>" + ChatColor.DARK_PURPLE + " - Toggles selected option.");
                 sender.sendMessage(ChatColor.LIGHT_PURPLE + "/parkour cleartimes <name>" + ChatColor.DARK_PURPLE + " - Clears all times for given course.");
                 sender.sendMessage(ChatColor.LIGHT_PURPLE + "/parkour cleartoptime <name>" + ChatColor.DARK_PURPLE + " - Clears record time for given course.");
+                sender.sendMessage(ChatColor.LIGHT_PURPLE + "/parkour info <name>" + ChatColor.LIGHT_PURPLE + " - Shows info about a course.");
+                sender.sendMessage(ChatColor.LIGHT_PURPLE + "/parkour list" + ChatColor.LIGHT_PURPLE + " - Lists all courses.");
+                sender.sendMessage(ChatColor.LIGHT_PURPLE + "/parkour option <option>" + ChatColor.DARK_PURPLE + " - Toggles given option.");
                 sender.sendMessage(ChatColor.LIGHT_PURPLE + "/parkour help" + ChatColor.DARK_PURPLE + " - Shows this page.");
             }
             return true;
