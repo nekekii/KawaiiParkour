@@ -5,10 +5,8 @@ import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerGameModeChangeEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerToggleFlightEvent;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.player.*;
 
 public class EventsListener implements Listener {
 
@@ -73,6 +71,18 @@ public class EventsListener implements Listener {
     public void onPlayerGamemodeChange(PlayerGameModeChangeEvent event) {
         if(event.getPlayer().getAllowFlight()) {
             TimeManager.cancelRun(event.getPlayer(), true);
+        }
+    }
+    
+    @EventHandler
+    public void onBreakPlate(BlockBreakEvent event) {
+        Material block = event.getBlock().getType();
+        if(block.equals(Material.LIGHT_WEIGHTED_PRESSURE_PLATE) || block.equals(Material.STONE_PRESSURE_PLATE) || block.equals(Material.HEAVY_WEIGHTED_PRESSURE_PLATE)) {
+            String[] point = TimeManager.getPoint(event.getBlock().getLocation(), true);
+            if(point[0].equals("true")) {
+                event.getPlayer().sendMessage(ChatColor.RED + "You can't break this plate! It belongs to " + ChatColor.DARK_RED + point[1] + ChatColor.RED + " parkour!");
+                event.setCancelled(true);
+            }
         }
     }
 

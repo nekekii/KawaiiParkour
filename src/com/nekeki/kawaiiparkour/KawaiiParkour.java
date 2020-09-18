@@ -5,7 +5,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class KawaiiParkour extends JavaPlugin {
 
     @Override
-    public void onEnable(){
+    public void onEnable() {
         //Start message
         System.out.println("KawaiiParkour by nekeki enabled. Version: 1.0");
         System.out.println("More info at: https://www.nekeki.com/kawaiiparkour");
@@ -18,15 +18,13 @@ public class KawaiiParkour extends JavaPlugin {
         getConfig().options().copyDefaults();
         saveDefaultConfig();
         TimeManager.initFile();
+        //Cleanup scripts
+        TimeManager.validWarning();
+        TimeManager.removeGhostCourses();
     }
 
     @Override
-    public void onDisable(){
-        //End storage file
-    }
-    
-    public boolean getThing(String path) {
-        return getConfig().getBoolean(path);
+    public void onDisable() {
     }
 
 }
