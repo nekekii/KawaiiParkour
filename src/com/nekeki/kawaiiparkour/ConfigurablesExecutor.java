@@ -18,7 +18,7 @@ public class ConfigurablesExecutor {
     public void firework(Player player) {
         if(plugin.getConfig().getBoolean("doFireworks")){
 
-            for (int i = 0; i < 2; i++) {
+            for (int i = 1; i < 3; i++) {
                 Firework firework = (Firework) player.getLocation().getWorld().spawnEntity(player.getLocation(), EntityType.FIREWORK);
                 FireworkMeta meta = firework.getFireworkMeta();
                 meta.setPower(i);

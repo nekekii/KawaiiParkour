@@ -284,7 +284,6 @@ public class TimeManager {
         String playerID = "player." + player.getUniqueId().toString();
         String parkourID = "parkour." + kawaiiFile.getString(playerID + ".creationName");
         String[] point = getPoint(location, false);
-        player.sendMessage(point[0] + " " + point[1] + " " + point[2]);
         boolean save = false;
         if(type.equals("start")) {
             if(point[0].equals("false")) {
@@ -539,11 +538,16 @@ public class TimeManager {
 
     public static void sendParkourList(CommandSender sender) {
         //Sends a sender with a list of all parkour courses.
-        Set<String> parkourKeys = kawaiiFile.getConfigurationSection("parkour").getKeys(false);
         sender.sendMessage(ChatColor.DARK_PURPLE + "----- Parkour List -----");
-        for(String x : parkourKeys) {
-            sender.sendMessage(ChatColor.LIGHT_PURPLE + x);
+        if(!kawaiiFile.isSet("parkour")) {
+            sender.sendMessage(ChatColor.RED + "None!");
+        } else {
+            Set<String> parkourKeys = kawaiiFile.getConfigurationSection("parkour").getKeys(false);
+            for(String x : parkourKeys) {
+                sender.sendMessage(ChatColor.LIGHT_PURPLE + x);
+            }
         }
+
     }
 
     static String readableTime(Long milliseconds) {
@@ -574,44 +578,49 @@ public class TimeManager {
 
     public static void validWarning() {
         //This fixes parkour courses that might not have valid start, end, or checkpoints.
-        Set<String> parkourKeys = kawaiiFile.getConfigurationSection("parkour").getKeys(false);
-        boolean warning = false;
-        for(String x : parkourKeys) {
-            if(!kawaiiFile.getLocation("parkour." + x + ".start").getBlock().getType().equals(Material.HEAVY_WEIGHTED_PRESSURE_PLATE)) {
-                System.out.println("WARNING: Parkour " + x + " does not have a valid start point! Replacing...");
-                kawaiiFile.getLocation("parkour." + x + ".start").getBlock().setType(Material.HEAVY_WEIGHTED_PRESSURE_PLATE);
-                warning = true;
-            }
-            if(!kawaiiFile.getLocation("parkour." + x + ".end").getBlock().getType().equals(Material.LIGHT_WEIGHTED_PRESSURE_PLATE)) {
-                System.out.println("WARNING: Parkour " + x + " does not have a valid end point! Replacing...");
-                kawaiiFile.getLocation("parkour." + x + ".end").getBlock().setType(Material.LIGHT_WEIGHTED_PRESSURE_PLATE);
-                warning = true;
-            }
-            int nocheckpoints = kawaiiFile.getInt("parkour." + x + ".nocheckpoints");
-            for (int i = 1; i <= nocheckpoints; i++) {
-                if(!kawaiiFile.getLocation("parkour." + x + ".checkpoint" + i).getBlock().getType().equals(Material.STONE_PRESSURE_PLATE)) {
-                    System.out.println("WARNING: Parkour " + x + " does not have a valid Checkpoint " + i + "! Replacing...");
-                    kawaiiFile.getLocation("parkour." + x + ".checkpoint" + i).getBlock().setType(Material.STONE_PRESSURE_PLATE);
+        if(kawaiiFile.isSet("parkour")) {
+            Set<String> parkourKeys = kawaiiFile.getConfigurationSection("parkour").getKeys(false);
+            boolean warning = false;
+            for(String x : parkourKeys) {
+                if(!kawaiiFile.getLocation("parkour." + x + ".start").getBlock().getType().equals(Material.HEAVY_WEIGHTED_PRESSURE_PLATE)) {
+                    System.out.println("WARNING: Parkour " + x + " does not have a valid start point! Replacing...");
+                    kawaiiFile.getLocation("parkour." + x + ".start").getBlock().setType(Material.HEAVY_WEIGHTED_PRESSURE_PLATE);
                     warning = true;
                 }
+                if(!kawaiiFile.getLocation("parkour." + x + ".end").getBlock().getType().equals(Material.LIGHT_WEIGHTED_PRESSURE_PLATE)) {
+                    System.out.println("WARNING: Parkour " + x + " does not have a valid end point! Replacing...");
+                    kawaiiFile.getLocation("parkour." + x + ".end").getBlock().setType(Material.LIGHT_WEIGHTED_PRESSURE_PLATE);
+                    warning = true;
+                }
+                int nocheckpoints = kawaiiFile.getInt("parkour." + x + ".nocheckpoints");
+                for (int i = 1; i <= nocheckpoints; i++) {
+                    if(!kawaiiFile.getLocation("parkour." + x + ".checkpoint" + i).getBlock().getType().equals(Material.STONE_PRESSURE_PLATE)) {
+                        System.out.println("WARNING: Parkour " + x + " does not have a valid Checkpoint " + i + "! Replacing...");
+                        kawaiiFile.getLocation("parkour." + x + ".checkpoint" + i).getBlock().setType(Material.STONE_PRESSURE_PLATE);
+                        warning = true;
+                    }
+                }
             }
-        }
-        if(warning) {
-            System.out.println("If you get repeatedly get non valid point warnings on restarts, please investigate the parkour course. Try deleting and reconfiguring the course.");
+            if(warning) {
+                System.out.println("If you get repeatedly get non valid point warnings on restarts, please investigate the parkour course. Try deleting and reconfiguring the course.");
+            }
         }
     }
 
     public static void removeGhostCourses() {
         //This removes courses that were abandoned in the creation process for whatever reason.
-        Set<String> parkourKeys = kawaiiFile.getConfigurationSection("parkour").getKeys(false);
-        for(String x : parkourKeys) {
-            if(kawaiiFile.isSet("parkour." + x + ".enabled")) {
-                if(!kawaiiFile.getBoolean("parkour." + x + ".enabled")) {
-                    System.out.println("WARNING: Detected ghost parkour " + x + ". Deleting...");
-                    deleteParkour(x, false);
+        if(kawaiiFile.isSet("parkour")) {
+            Set<String> parkourKeys = kawaiiFile.getConfigurationSection("parkour").getKeys(false);
+            for(String x : parkourKeys) {
+                if(kawaiiFile.isSet("parkour." + x + ".enabled")) {
+                    if(!kawaiiFile.getBoolean("parkour." + x + ".enabled")) {
+                        System.out.println("WARNING: Detected ghost parkour " + x + ". Deleting...");
+                        deleteParkour(x, false);
+                    }
                 }
             }
         }
+
     }
 
 

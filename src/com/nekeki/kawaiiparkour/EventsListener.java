@@ -39,8 +39,6 @@ public class EventsListener implements Listener {
                 }
             } else {
                 //If not in parkour setup
-                String[] uwu = TimeManager.getPoint(event.getClickedBlock().getLocation(), true);
-                event.getPlayer().sendMessage(uwu[0] + " " + uwu[1] + " " + uwu[2]);
                 if(event.getClickedBlock().getType().equals(Material.HEAVY_WEIGHTED_PRESSURE_PLATE)) {
                     TimeManager.startRun(event.getPlayer(), event.getClickedBlock().getLocation());
                 } else if(event.getClickedBlock().getType().equals(Material.STONE_PRESSURE_PLATE)) {
