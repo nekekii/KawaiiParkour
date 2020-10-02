@@ -10,42 +10,43 @@ import org.bukkit.event.player.*;
 
 public class EventsListener implements Listener {
 
-
     @EventHandler
     public void onPressurePlate(PlayerInteractEvent event) {
-        if(event.getAction().equals(Action.PHYSICAL)) {
-            TimeManager.playerSetup(event.getPlayer());
-            if(TimeManager.inSetup(event.getPlayer())) {
-                //If in parkour setup
-                int stage = TimeManager.creationCheckpoint(event.getPlayer());
-                if(event.getClickedBlock().getType().equals(Material.HEAVY_WEIGHTED_PRESSURE_PLATE)) {
-                    if(stage == -1) {
-                        TimeManager.setupPoint(event.getPlayer(), "start", event.getClickedBlock().getLocation());
-                    } else {
-                        event.getPlayer().sendMessage(ChatColor.RED + "You've already logged a start point!");
-                    }
-                } else if(event.getClickedBlock().getType().equals(Material.STONE_PRESSURE_PLATE)) {
-                    if(stage == -1) {
-                        event.getPlayer().sendMessage(ChatColor.RED + "You need to log a start (iron) pressure plate first!");
-                    } else {
-                        TimeManager.setupPoint(event.getPlayer(), "checkpoint", event.getClickedBlock().getLocation());
-                    }
-                } else if(event.getClickedBlock().getType().equals(Material.LIGHT_WEIGHTED_PRESSURE_PLATE)) {
-                    if(stage == -1) {
-                        event.getPlayer().sendMessage(ChatColor.RED + "You need to log a start (iron) pressure plate first!");
-                    } else {
-                        TimeManager.setupPoint(event.getPlayer(), "end", event.getClickedBlock().getLocation());
-                    }
+        if (!event.getAction().equals(Action.PHYSICAL)) {
+            return;
+        }
+
+        TimeManager.playerSetup(event.getPlayer());
+        if (TimeManager.inSetup(event.getPlayer())) {
+            //If in parkour setup
+            int stage = TimeManager.creationCheckpoint(event.getPlayer());
+            if (event.getClickedBlock().getType().equals(Material.HEAVY_WEIGHTED_PRESSURE_PLATE)) {
+                if (stage == -1) {
+                    TimeManager.setupPoint(event.getPlayer(), "start", event.getClickedBlock().getLocation());
+                } else {
+                    event.getPlayer().sendMessage(ChatColor.RED + "You've already logged a start point!");
                 }
-            } else {
-                //If not in parkour setup
-                if(event.getClickedBlock().getType().equals(Material.HEAVY_WEIGHTED_PRESSURE_PLATE)) {
-                    TimeManager.startRun(event.getPlayer(), event.getClickedBlock().getLocation());
-                } else if(event.getClickedBlock().getType().equals(Material.STONE_PRESSURE_PLATE)) {
-                    TimeManager.checkpointRun(event.getPlayer(), event.getClickedBlock().getLocation());
-                } else if(event.getClickedBlock().getType().equals(Material.LIGHT_WEIGHTED_PRESSURE_PLATE)) {
-                    TimeManager.endRun(event.getPlayer(), event.getClickedBlock().getLocation());
+            } else if (event.getClickedBlock().getType().equals(Material.STONE_PRESSURE_PLATE)) {
+                if (stage == -1) {
+                    event.getPlayer().sendMessage(ChatColor.RED + "You need to log a start (iron) pressure plate first!");
+                } else {
+                    TimeManager.setupPoint(event.getPlayer(), "checkpoint", event.getClickedBlock().getLocation());
                 }
+            } else if (event.getClickedBlock().getType().equals(Material.LIGHT_WEIGHTED_PRESSURE_PLATE)) {
+                if (stage == -1) {
+                    event.getPlayer().sendMessage(ChatColor.RED + "You need to log a start (iron) pressure plate first!");
+                } else {
+                    TimeManager.setupPoint(event.getPlayer(), "end", event.getClickedBlock().getLocation());
+                }
+            }
+        } else {
+            //If not in parkour setup
+            if (event.getClickedBlock().getType().equals(Material.HEAVY_WEIGHTED_PRESSURE_PLATE)) {
+                TimeManager.startRun(event.getPlayer(), event.getClickedBlock().getLocation());
+            } else if (event.getClickedBlock().getType().equals(Material.STONE_PRESSURE_PLATE)) {
+                TimeManager.checkpointRun(event.getPlayer(), event.getClickedBlock().getLocation());
+            } else if (event.getClickedBlock().getType().equals(Material.LIGHT_WEIGHTED_PRESSURE_PLATE)) {
+                TimeManager.endRun(event.getPlayer(), event.getClickedBlock().getLocation());
             }
         }
     }
