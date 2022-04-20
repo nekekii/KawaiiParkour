@@ -6,7 +6,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerToggleFlightEvent;
 
 public class EventsListener implements Listener {
 
@@ -54,31 +57,31 @@ public class EventsListener implements Listener {
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent event) {
         //This deletes a parkour creation if it is still in setup while the player leaves
-        if(TimeManager.inSetup(event.getPlayer())) {
+        if (TimeManager.inSetup(event.getPlayer())) {
             TimeManager.deleteParkour(TimeManager.getSetupName(event.getPlayer()), false);
         }
     }
 
     @EventHandler
     public void onPlayerFlightChange(PlayerToggleFlightEvent event) {
-        if(event.getPlayer().getAllowFlight()) {
+        if (event.getPlayer().getAllowFlight()) {
             TimeManager.cancelRun(event.getPlayer(), true);
         }
     }
 
     @EventHandler
     public void onPlayerGamemodeChange(PlayerGameModeChangeEvent event) {
-        if(event.getPlayer().getAllowFlight()) {
+        if (event.getPlayer().getAllowFlight()) {
             TimeManager.cancelRun(event.getPlayer(), true);
         }
     }
-    
+
     @EventHandler
     public void onBreakPlate(BlockBreakEvent event) {
         Material block = event.getBlock().getType();
-        if(block.equals(Material.LIGHT_WEIGHTED_PRESSURE_PLATE) || block.equals(Material.STONE_PRESSURE_PLATE) || block.equals(Material.HEAVY_WEIGHTED_PRESSURE_PLATE)) {
+        if (block.equals(Material.LIGHT_WEIGHTED_PRESSURE_PLATE) || block.equals(Material.STONE_PRESSURE_PLATE) || block.equals(Material.HEAVY_WEIGHTED_PRESSURE_PLATE)) {
             String[] point = TimeManager.getPoint(event.getBlock().getLocation(), true);
-            if(point[0].equals("true")) {
+            if (point[0].equals("true")) {
                 event.getPlayer().sendMessage(ChatColor.RED + "You can't break this plate! It belongs to " + ChatColor.DARK_RED + point[1] + ChatColor.RED + " parkour!");
                 event.setCancelled(true);
             }

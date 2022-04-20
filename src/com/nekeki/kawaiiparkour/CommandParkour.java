@@ -1,7 +1,9 @@
 package com.nekeki.kawaiiparkour;
 
 import org.bukkit.ChatColor;
-import org.bukkit.command.*;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class CommandParkour implements CommandExecutor {
@@ -48,13 +50,9 @@ public class CommandParkour implements CommandExecutor {
             case "option":
                 this.optionAction(sender, args);
                 break;
-            case "help":
-                this.helpAction();
-                break;
             default:
-                this.helpAction();
+                this.helpAction(sender);
         }
-
         return true;
     }
 

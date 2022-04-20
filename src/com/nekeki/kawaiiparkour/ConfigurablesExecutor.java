@@ -16,7 +16,7 @@ public class ConfigurablesExecutor {
     static Plugin plugin = KawaiiParkour.getPlugin(KawaiiParkour.class);
 
     public void firework(Player player) {
-        if(plugin.getConfig().getBoolean("doFireworks")){
+        if (plugin.getConfig().getBoolean("doFireworks")) {
 
             for (int i = 1; i < 3; i++) {
                 Firework firework = (Firework) player.getLocation().getWorld().spawnEntity(player.getLocation(), EntityType.FIREWORK);
@@ -31,19 +31,19 @@ public class ConfigurablesExecutor {
 
     public void sound(Player player) {
 
-        if(plugin.getConfig().getBoolean("doSounds")) {
+        if (plugin.getConfig().getBoolean("doSounds")) {
             player.playSound(player.getLocation(), Sound.ENTITY_CAT_AMBIENT, 1, 1);
         }
 
     }
 
     public void setOption(CommandSender sender, String option) {
-        if(option.toLowerCase().equals("firework")) {
+        if (option.equalsIgnoreCase("firework")) {
             boolean doFirework = plugin.getConfig().getBoolean("doFireworks");
             doFirework = !doFirework;
             plugin.getConfig().set("doFireworks", doFirework);
             sender.sendMessage(ChatColor.DARK_PURPLE + "Set fireworks to: " + ChatColor.LIGHT_PURPLE + doFirework);
-        } else if(option.toLowerCase().equals("sound")) {
+        } else if (option.toLowerCase().equals("sound")) {
             boolean doSounds = plugin.getConfig().getBoolean("doSounds");
             doSounds = !doSounds;
             plugin.getConfig().set("doSounds", doSounds);
