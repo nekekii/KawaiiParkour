@@ -24,7 +24,7 @@ public class TimeManager {
         //Make sure file works
         file = new File(Bukkit.getServer().getPluginManager().getPlugin("KawaiiParkour").getDataFolder(), "KawaiiStorage");
 
-        if(!file.exists()) {
+        if (!file.exists()) {
             try {
                 file.createNewFile();
             } catch (IOException e) {
@@ -127,62 +127,62 @@ public class TimeManager {
         //Compares start and end times, save variables for end run, send player end message
         String playerID = "player." + player.getUniqueId().toString();
         String[] point = getPoint(location, true);
-        if(kawaiiFile.getBoolean(playerID + ".hasStarted") && point[1].equals(kawaiiFile.getString(playerID + ".runCourse"))) {
-           if(kawaiiFile.getInt(playerID + ".checkpoint") == kawaiiFile.getInt("parkour." + point[1] + ".nocheckpoints")) {
-               Date t = new Date();
-               Long startTime = kawaiiFile.getLong(playerID + ".startTime");
-               Long endTime = t.getTime();
-               Long totalTime = endTime - startTime;
-               if(kawaiiFile.isSet(playerID + ".best." + point[1])) {
-                   //If personal best
-                   if(kawaiiFile.getLong(playerID + ".best." + point[1]) <= totalTime) {
-                       player.sendMessage(ChatColor.DARK_PURPLE + "Completed the parkour " + ChatColor.LIGHT_PURPLE + point[1] + ChatColor.DARK_PURPLE + " in " + ChatColor.LIGHT_PURPLE + readableTime(totalTime) + ChatColor.DARK_PURPLE + ". Personal best: " + ChatColor.LIGHT_PURPLE + readableTime(kawaiiFile.getLong(playerID + ".best." + point[1])));
-                   } else {
-                       player.sendMessage(ChatColor.DARK_PURPLE + "New personal best for " + ChatColor.LIGHT_PURPLE + point[1] + ChatColor.DARK_PURPLE + "! " + ChatColor.LIGHT_PURPLE + readableTime(totalTime));
-                       kawaiiFile.set(playerID + ".best." + point[1], totalTime);
-                   }
-               } else {
-                   player.sendMessage(ChatColor.DARK_PURPLE + "You completed the parkour " + ChatColor.LIGHT_PURPLE + point[1] + ChatColor.DARK_PURPLE + " in " + ChatColor.LIGHT_PURPLE + readableTime(totalTime) + ChatColor.DARK_PURPLE + "!");
-                   kawaiiFile.set(playerID + ".best." + point[1], totalTime);
-               }
+        if (kawaiiFile.getBoolean(playerID + ".hasStarted") && point[1].equals(kawaiiFile.getString(playerID + ".runCourse"))) {
+            if (kawaiiFile.getInt(playerID + ".checkpoint") == kawaiiFile.getInt("parkour." + point[1] + ".nocheckpoints")) {
+                Date t = new Date();
+                Long startTime = kawaiiFile.getLong(playerID + ".startTime");
+                Long endTime = t.getTime();
+                Long totalTime = endTime - startTime;
+                if (kawaiiFile.isSet(playerID + ".best." + point[1])) {
+                    //If personal best
+                    if (kawaiiFile.getLong(playerID + ".best." + point[1]) <= totalTime) {
+                        player.sendMessage(ChatColor.DARK_PURPLE + "Completed the parkour " + ChatColor.LIGHT_PURPLE + point[1] + ChatColor.DARK_PURPLE + " in " + ChatColor.LIGHT_PURPLE + readableTime(totalTime) + ChatColor.DARK_PURPLE + ". Personal best: " + ChatColor.LIGHT_PURPLE + readableTime(kawaiiFile.getLong(playerID + ".best." + point[1])));
+                    } else {
+                        player.sendMessage(ChatColor.DARK_PURPLE + "New personal best for " + ChatColor.LIGHT_PURPLE + point[1] + ChatColor.DARK_PURPLE + "! " + ChatColor.LIGHT_PURPLE + readableTime(totalTime));
+                        kawaiiFile.set(playerID + ".best." + point[1], totalTime);
+                    }
+                } else {
+                    player.sendMessage(ChatColor.DARK_PURPLE + "You completed the parkour " + ChatColor.LIGHT_PURPLE + point[1] + ChatColor.DARK_PURPLE + " in " + ChatColor.LIGHT_PURPLE + readableTime(totalTime) + ChatColor.DARK_PURPLE + "!");
+                    kawaiiFile.set(playerID + ".best." + point[1], totalTime);
+                }
 
-               if(kawaiiFile.isSet("parkour." + point[1] + ".recordTime")) {
-                   //If course record
-                   if(totalTime < kawaiiFile.getLong("parkour." + point[1] + ".recordTime")) {
-                       player.sendMessage(ChatColor.DARK_PURPLE + "New course record!!!");
-                       kawaiiFile.set("parkour." + point[1] + ".recordTime", totalTime);
-                       kawaiiFile.set("parkour." + point[1] + ".recordId", player.getUniqueId().toString());
-                       kawaiiFile.set("parkour." + point[1] + ".recordName", player.getName());
-                   }
-               } else {
-                   player.sendMessage(ChatColor.DARK_PURPLE + "New course record!!!");
-                   kawaiiFile.set("parkour." + point[1] + ".recordTime", totalTime);
-                   kawaiiFile.set("parkour." + point[1] + ".recordId", player.getUniqueId().toString());
-                   kawaiiFile.set("parkour." + point[1] + ".recordName", player.getName());
-               }
+                if (kawaiiFile.isSet("parkour." + point[1] + ".recordTime")) {
+                    //If course record
+                    if (totalTime < kawaiiFile.getLong("parkour." + point[1] + ".recordTime")) {
+                        player.sendMessage(ChatColor.DARK_PURPLE + "New course record!!!");
+                        kawaiiFile.set("parkour." + point[1] + ".recordTime", totalTime);
+                        kawaiiFile.set("parkour." + point[1] + ".recordId", player.getUniqueId().toString());
+                        kawaiiFile.set("parkour." + point[1] + ".recordName", player.getName());
+                    }
+                } else {
+                    player.sendMessage(ChatColor.DARK_PURPLE + "New course record!!!");
+                    kawaiiFile.set("parkour." + point[1] + ".recordTime", totalTime);
+                    kawaiiFile.set("parkour." + point[1] + ".recordId", player.getUniqueId().toString());
+                    kawaiiFile.set("parkour." + point[1] + ".recordName", player.getName());
+                }
 
-               ConfigurablesExecutor configurablesExecutor = new ConfigurablesExecutor();
-               configurablesExecutor.firework(player);
-               configurablesExecutor.sound(player);
+                ConfigurablesExecutor configurablesExecutor = new ConfigurablesExecutor();
+                configurablesExecutor.firework(player);
+                configurablesExecutor.sound(player);
 
-               kawaiiFile.set(playerID + ".hasStarted", false);
+                kawaiiFile.set(playerID + ".hasStarted", false);
 
-               try {
-                   kawaiiFile.save(file);
-               } catch (IOException e) {
-                   System.out.println("Error saving end run data for " + player.getName() + ".");
-               }
+                try {
+                    kawaiiFile.save(file);
+                } catch (IOException e) {
+                    System.out.println("Error saving end run data for " + player.getName() + ".");
+                }
 
-           } else {
-               if(kawaiiFile.getInt(playerID + ".checkpoint") == 0) {
-                   player.sendMessage(ChatColor.RED + "You have not completed all the checkpoints! Use " + ChatColor.DARK_RED + "/parkour reset " + ChatColor.RED + "to start over.");
-               } else {
-                   player.sendMessage(ChatColor.RED + "You have not completed all the checkpoints! Use " + ChatColor.DARK_RED + "/parkour checkpoint " + ChatColor.RED + "to go to your last checkpoint.");
-               }
-           }
+            } else {
+                if (kawaiiFile.getInt(playerID + ".checkpoint") == 0) {
+                    player.sendMessage(ChatColor.RED + "You have not completed all the checkpoints! Use " + ChatColor.DARK_RED + "/parkour reset " + ChatColor.RED + "to start over.");
+                } else {
+                    player.sendMessage(ChatColor.RED + "You have not completed all the checkpoints! Use " + ChatColor.DARK_RED + "/parkour checkpoint " + ChatColor.RED + "to go to your last checkpoint.");
+                }
+            }
 
 
-        } else if(point[0].equals("true")) {
+        } else if (point[0].equals("true")) {
             player.sendMessage(ChatColor.RED + "You have not started parkour " + ChatColor.DARK_RED + point[1] + ChatColor.RED + " yet.");
         }
     }
@@ -207,10 +207,10 @@ public class TimeManager {
         player.sendMessage(ChatColor.DARK_PURPLE + "Sent you to " + ChatColor.LIGHT_PURPLE + "Checkpoint " + kawaiiFile.getInt(playerID + ".checkpoint") + ChatColor.DARK_PURPLE + "!");
     }
 
-    public static void commandReset (Player player) {
+    public static void commandReset(Player player) {
         //This places a player at a parkour start line
         String playerID = "player." + player.getUniqueId().toString();
-        if(!kawaiiFile.getBoolean(playerID + ".hasStarted")) {
+        if (!kawaiiFile.getBoolean(playerID + ".hasStarted")) {
             player.sendMessage(ChatColor.RED + "You have not started a parkour yet!");
             return;
         }
@@ -223,11 +223,11 @@ public class TimeManager {
         player.teleport(l);
     }
 
-    public static void cancelRun (Player player, boolean isFlying) {
+    public static void cancelRun(Player player, boolean isFlying) {
         String playerID = "player." + player.getUniqueId().toString();
         boolean save = false;
-        if(isFlying) {
-            if(kawaiiFile.getBoolean(playerID + ".hasStarted") && !kawaiiFile.getBoolean(playerID + ".creationIntercept")) {
+        if (isFlying) {
+            if (kawaiiFile.getBoolean(playerID + ".hasStarted") && !kawaiiFile.getBoolean(playerID + ".creationIntercept")) {
                 player.sendMessage(ChatColor.RED + "You can't be in flight mode. Cancelled your parkour run.");
                 save = true;
             }
@@ -236,7 +236,7 @@ public class TimeManager {
             save = true;
         }
 
-        if(save) {
+        if (save) {
             kawaiiFile.set(playerID + ".hasStarted", false);
             try {
                 kawaiiFile.save(file);
@@ -289,8 +289,8 @@ public class TimeManager {
         String parkourID = "parkour." + kawaiiFile.getString(playerID + ".creationName");
         String[] point = getPoint(location, false);
         boolean save = false;
-        if(type.equals("start")) {
-            if(point[0].equals("false")) {
+        if (type.equals("start")) {
+            if (point[0].equals("false")) {
                 kawaiiFile.set(parkourID + ".start", location);
                 kawaiiFile.set(parkourID + ".nocheckpoints", 0);
                 player.sendMessage(ChatColor.DARK_PURPLE + "Set start point!");
@@ -298,8 +298,8 @@ public class TimeManager {
             } else {
                 player.sendMessage(ChatColor.RED + "This is already a start point!");
             }
-        } else if(type.equals("checkpoint")) {
-            if(point[0].equals("false")) {
+        } else if (type.equals("checkpoint")) {
+            if (point[0].equals("false")) {
                 int nocheckpoints = kawaiiFile.getInt(parkourID + ".nocheckpoints");
                 nocheckpoints++;
                 kawaiiFile.set(parkourID + ".checkpoint" + nocheckpoints, location);
@@ -309,18 +309,18 @@ public class TimeManager {
             } else {
                 player.sendMessage(ChatColor.RED + "This is already a checkpoint!");
             }
-        } else if(type.equals("end")) {
-            if(point[0].equals("false")) {
+        } else if (type.equals("end")) {
+            if (point[0].equals("false")) {
                 kawaiiFile.set(parkourID + ".end", location);
                 kawaiiFile.set(playerID + ".creationIntercept", false);
                 kawaiiFile.set(parkourID + ".enabled", true);
-                player.sendMessage(ChatColor.DARK_PURPLE + "Set end point and finished making " + ChatColor.LIGHT_PURPLE + kawaiiFile.getString(playerID  + ".creationName") + ChatColor.DARK_PURPLE + ".");
+                player.sendMessage(ChatColor.DARK_PURPLE + "Set end point and finished making " + ChatColor.LIGHT_PURPLE + kawaiiFile.getString(playerID + ".creationName") + ChatColor.DARK_PURPLE + ".");
                 save = true;
             } else {
                 player.sendMessage(ChatColor.RED + "This is already a finish point!");
             }
         }
-        if(save) {
+        if (save) {
             try {
                 kawaiiFile.save(file);
             } catch (IOException e) {
@@ -333,10 +333,10 @@ public class TimeManager {
     public static void deleteParkour(String courseName, boolean fromConsole) {
         //this deletes a parkour
         boolean cont = false;
-        if(fromConsole) {
+        if (fromConsole) {
             Set<String> parkourKeys = kawaiiFile.getConfigurationSection("parkour").getKeys(false);
-            for(String x : parkourKeys) {
-                if(x.equals(courseName)){
+            for (String x : parkourKeys) {
+                if (x.equals(courseName)) {
                     cont = true;
                 }
             }
@@ -344,10 +344,10 @@ public class TimeManager {
             cont = true;
         }
 
-        if(cont) {
+        if (cont) {
             kawaiiFile.set("parkour." + courseName, null);
             deleteAllTimes(courseName);
-            if(fromConsole) {
+            if (fromConsole) {
                 System.out.println("Deleted parkour " + courseName + ".");
             }
             try {
@@ -365,13 +365,13 @@ public class TimeManager {
         //this captures the parkour to be deleted for further confirmation
         boolean exists = false;
         Set<String> parkourKeys = kawaiiFile.getConfigurationSection("parkour").getKeys(false);
-        for(String x : parkourKeys) {
-            if(x.equals(courseName)){
+        for (String x : parkourKeys) {
+            if (x.equals(courseName)) {
                 exists = true;
             }
         }
 
-        if(exists) {
+        if (exists) {
             String playerID = "player." + player.getUniqueId().toString();
             kawaiiFile.set(playerID + ".delete", courseName);
             try {
@@ -404,7 +404,7 @@ public class TimeManager {
 
     public static void deleteAllTimes(String course) {
         Set<String> playerKeys = kawaiiFile.getConfigurationSection("player").getKeys(false);
-        for(String x : playerKeys) {
+        for (String x : playerKeys) {
             kawaiiFile.set("player." + x + ".best." + course, null);
         }
 
@@ -432,7 +432,7 @@ public class TimeManager {
         //Sets up default values for player in file if player is not already in file.
         String playerID = "player." + player.getUniqueId().toString();
         Date t = new Date();
-        if(!kawaiiFile.contains(playerID)) {
+        if (!kawaiiFile.contains(playerID)) {
             kawaiiFile.set(playerID + ".name", player.getName());
             kawaiiFile.set(playerID + ".startTime", t.getTime());
             kawaiiFile.set(playerID + ".hasStarted", false);
@@ -449,7 +449,7 @@ public class TimeManager {
             } catch (IOException e) {
                 System.out.println("Failed to save player initialization data for " + player.getName() + ".");
             }
-        } else if(!kawaiiFile.getString(playerID + ".name").equals(player.getName())) {
+        } else if (!kawaiiFile.getString(playerID + ".name").equals(player.getName())) {
             kawaiiFile.set(playerID + ".name", player.getName());
             try {
                 kawaiiFile.save(file);
@@ -516,8 +516,8 @@ public class TimeManager {
         //Sends a sender info about a given parkour course.
         boolean sendMessage = false;
         Set<String> parkourKeys = kawaiiFile.getConfigurationSection("parkour").getKeys(false);
-        for(String x : parkourKeys) {
-            if(x.equals(parkourName)){
+        for (String x : parkourKeys) {
+            if (x.equals(parkourName)) {
                 sendMessage = true;
             }
         }
@@ -558,21 +558,21 @@ public class TimeManager {
         milliseconds -= TimeUnit.HOURS.toMillis(hours);
         Long minutes = TimeUnit.MILLISECONDS.toMinutes(milliseconds);
         String minutesS = minutes.toString();
-        if(minutesS.length() == 1) {
+        if (minutesS.length() == 1) {
             minutesS = "0" + minutesS;
         }
         milliseconds -= TimeUnit.MINUTES.toMillis(minutes);
         Long seconds = TimeUnit.MILLISECONDS.toSeconds(milliseconds);
         String secondsS = seconds.toString();
-        if(secondsS.length() == 1) {
+        if (secondsS.length() == 1) {
             secondsS = "0" + secondsS;
         }
         milliseconds -= TimeUnit.SECONDS.toMillis(seconds);
         Long millis = milliseconds;
         String millisS = millis.toString();
-        if(millisS.length() == 1) {
+        if (millisS.length() == 1) {
             millisS = "00" + millisS;
-        } else if(millisS.length() == 2) {
+        } else if (millisS.length() == 2) {
             millisS = "0" + minutesS;
         }
         return hours.toString() + ":" + minutesS + ":" + secondsS + "." + millisS;
@@ -586,27 +586,27 @@ public class TimeManager {
 
         Set<String> parkourKeys = kawaiiFile.getConfigurationSection("parkour").getKeys(false);
         boolean warning = false;
-        for(String x : parkourKeys) {
-            if(!kawaiiFile.getLocation("parkour." + x + ".start").getBlock().getType().equals(Material.HEAVY_WEIGHTED_PRESSURE_PLATE)) {
+        for (String x : parkourKeys) {
+            if (!kawaiiFile.getLocation("parkour." + x + ".start").getBlock().getType().equals(Material.HEAVY_WEIGHTED_PRESSURE_PLATE)) {
                 System.out.println("WARNING: Parkour " + x + " does not have a valid start point! Replacing...");
                 kawaiiFile.getLocation("parkour." + x + ".start").getBlock().setType(Material.HEAVY_WEIGHTED_PRESSURE_PLATE);
                 warning = true;
             }
-            if(!kawaiiFile.getLocation("parkour." + x + ".end").getBlock().getType().equals(Material.LIGHT_WEIGHTED_PRESSURE_PLATE)) {
+            if (!kawaiiFile.getLocation("parkour." + x + ".end").getBlock().getType().equals(Material.LIGHT_WEIGHTED_PRESSURE_PLATE)) {
                 System.out.println("WARNING: Parkour " + x + " does not have a valid end point! Replacing...");
                 kawaiiFile.getLocation("parkour." + x + ".end").getBlock().setType(Material.LIGHT_WEIGHTED_PRESSURE_PLATE);
                 warning = true;
             }
             int nocheckpoints = kawaiiFile.getInt("parkour." + x + ".nocheckpoints");
             for (int i = 1; i <= nocheckpoints; i++) {
-                if(!kawaiiFile.getLocation("parkour." + x + ".checkpoint" + i).getBlock().getType().equals(Material.STONE_PRESSURE_PLATE)) {
+                if (!kawaiiFile.getLocation("parkour." + x + ".checkpoint" + i).getBlock().getType().equals(Material.STONE_PRESSURE_PLATE)) {
                     System.out.println("WARNING: Parkour " + x + " does not have a valid Checkpoint " + i + "! Replacing...");
                     kawaiiFile.getLocation("parkour." + x + ".checkpoint" + i).getBlock().setType(Material.STONE_PRESSURE_PLATE);
                     warning = true;
                 }
             }
         }
-        if(warning) {
+        if (warning) {
             System.out.println("If you get repeatedly get non valid point warnings on restarts, please investigate the parkour course. Try deleting and reconfiguring the course.");
         }
     }
@@ -620,7 +620,7 @@ public class TimeManager {
         Set<String> parkourKeys = kawaiiFile.getConfigurationSection("parkour").getKeys(false);
         for (String x : parkourKeys) {
             if (kawaiiFile.isSet("parkour." + x + ".enabled")
-                && !kawaiiFile.getBoolean("parkour." + x + ".enabled")) {
+                    && !kawaiiFile.getBoolean("parkour." + x + ".enabled")) {
                 System.out.println("WARNING: Detected ghost parkour " + x + ". Deleting...");
                 deleteParkour(x, false);
             }
